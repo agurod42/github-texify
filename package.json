@@ -1,0 +1,23 @@
+{
+  "name": "github-markdown-latex-renderer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agurz/github-markdown-latex-renderer.git"
+  },
+  "author": "Agustín Rodríguez <agurz@icloud.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/agurz/github-markdown-latex-renderer/issues"
+  },
+  "homepage": "https://github.com/agurz/github-markdown-latex-renderer#readme",
+  "dependencies": {
+    "github-webhook-handler": "^0.6.0"
+  }
+}
