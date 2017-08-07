@@ -5,7 +5,7 @@ const GitHubWebhook = require('github-webhook-handler')
 
 const GitHubMarkdownLaTexRenderer = require('./githubMarkdownLaTeXRenderer')
 
-require('dotenv').config()
+//require('dotenv').config()
 
 const githubApp = GitHubApp({ id: process.env.GITHUB_APP_ID, cert: process.env.GITHUB_APP_PRIVATE_KEY || fs.readFileSync(__dirname + '/../cert/private-key.pem') });
 const githubWebhook = GitHubWebhook({ path: '/', secret: process.env.GITHUB_WEBHOOK_SECRET })
