@@ -56,3 +56,8 @@ typings/
 
 # dotenv environment variables file
 .env
+
+# github-markdown-latex-renderer
+
+cert/
+tmp/
