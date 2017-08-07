@@ -50,22 +50,15 @@ GitHubMarkdownLaTexRenderer.prototype.fetchTexFilesOnTree = function (action) {
 GitHubMarkdownLaTexRenderer.prototype.renderAllTexFilesOnTree = function () {
     return new Promise((resolve, reject) => {
 
-        this.fetchTexFilesOnTree()
-            .then(texFiles => {
-                let renderTexFilePromises = []
-
-                texFiles.forEach(file => {
-                    let renderTexFilePromise = this.renderTexFile(treeId, file)
-                    renderTexFilePromises.push(renderTexFilePromise)
+        this.fetchTexFilesOnTree().then(texFiles => {
+            Promise
+                .all(texFiles.map(file => this.renderTexFile(file).catch(err => err)))
+                .then(values => {
+                    console.log('renderTexFilePromises', values)
+                    resolve()
                 })
-
-                Promise
-                    .all(renderTexFilePromises.map(p => p.catch(err => err)))
-                    .then(values => {
-                        console.log(values)
-                        resolve(renderTexFilePromises.length)
-                    })
-            })
+                .catch(reject)
+        })
 
     })
 }
