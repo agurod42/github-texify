@@ -91,9 +91,9 @@ GitHubMarkdownLaTexRenderer.prototype.renderTexFile = function (treeId, file) {
 
                         fs.writeFileSync(tmpInputPath, res.data.content, res.data.encoding)
 
-                        exec('python -m readme2tex --output ' + tmpOutputPath + ' ' + tmpInputPath, (err, stdout, stderr) => {
+                        exec('python -m readme2tex --nocdn --output ' + tmpOutputPath + ' ' + tmpInputPath, (err, stdout, stderr) => {
                             if (err) reject(err)
-                                
+
                             console.log(stdout)
                         })
 
