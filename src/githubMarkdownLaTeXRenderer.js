@@ -2,10 +2,12 @@ const exec = require('child_process').exec
 const fs = require('fs')
 const path = require('path')
 
-GitHubMarkdownLaTexRenderer = function (github, repo) {
+GitHubMarkdownLaTexRenderer = function (github, repo, treeId) {
     this.github = github
     this.repo = repo
-    this.tmpPath = path.join(__dirname, '../tmp')
+    this.treeId = treeId
+
+    this.tmpPath = path.join(__dirname, '../tmp', treeId)
 
     if (!fs.existsSync(this.tmpPath)) {
         fs.mkdirSync(this.tmpPath)
@@ -22,11 +24,11 @@ GitHubMarkdownLaTexRenderer.prototype.args = function (obj) {
     )
 }
 
-GitHubMarkdownLaTexRenderer.prototype.fetchTexFilesOnTree = function (treeId, action) {
+GitHubMarkdownLaTexRenderer.prototype.fetchTexFilesOnTree = function (action) {
     return new Promise((resolve, reject) => {
 
         this.github.gitdata
-            .getTree(this.args({ sha: treeId }))
+            .getTree(this.args({ sha: this.treeId }))
             .then(res => {
                 let texFiles = []
 
@@ -45,10 +47,10 @@ GitHubMarkdownLaTexRenderer.prototype.fetchTexFilesOnTree = function (treeId, ac
     })
 }
 
-GitHubMarkdownLaTexRenderer.prototype.renderAllTexFilesOnTree = function (treeId) {
+GitHubMarkdownLaTexRenderer.prototype.renderAllTexFilesOnTree = function () {
     return new Promise((resolve, reject) => {
 
-        this.fetchTexFilesOnTree(treeId)
+        this.fetchTexFilesOnTree()
             .then(texFiles => {
                 let renderTexFilePromises = []
 
@@ -68,7 +70,7 @@ GitHubMarkdownLaTexRenderer.prototype.renderAllTexFilesOnTree = function (treeId
     })
 }
 
-GitHubMarkdownLaTexRenderer.prototype.renderTexFile = function (treeId, file) {
+GitHubMarkdownLaTexRenderer.prototype.renderTexFile = function (file) {
     return new Promise((resolve, reject) => {
 
         // reject if the file was commited by this bot
