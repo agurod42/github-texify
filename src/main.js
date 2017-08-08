@@ -2,8 +2,7 @@ const fs = require('fs')
 const http = require('http')
 const GitHubApp = require('github-app')
 const GitHubWebhook = require('github-webhook-handler')
-
-const GitHubMarkdownLaTexRenderer = require('./githubMarkdownLaTeXRenderer')
+const TeXify = require('./texify')
 
 if (process.env.NODE_ENV != 'production') {
     require('dotenv').config()
@@ -26,18 +25,18 @@ githubWebhook.on('error', err => {
 githubWebhook.on('push', event => {
     console.log('Received a push event for %s to %s', event.payload.repository.name, event.payload.ref)
 
-    if (event.payload.head_commit.author.name == 'markdown-latex-renderer[bot]') {
-        console.log('Push event was triggered by markdown-latex-renderer[bot]. Nothing to do.')
+    if (event.payload.head_commit.author.name == 'texify[bot]') {
+        console.log('Push event was triggered by texify[bot]. Nothing to do.')
     }
     else {
         githubApp
             .asInstallation(event.payload.installation.id)
             .then(github => {
-                let renderer = new GitHubMarkdownLaTexRenderer(github, event.payload)
+                let texify = new TeXify(github, event.payload)
 
-                renderer
+                texify
                     .renderAllTexFilesOnTree()
-                    .then(() => renderer.pushChangesToGitHub())
+                    .then(() => texify.pushChangesToGitHub())
                     .then(() => {
                         console.log('OK!')
                     })

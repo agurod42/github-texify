@@ -5,7 +5,7 @@ const readdirr = require('fs-readdir-recursive')
 const rmdir = require('rmdir')
 const urljoin = require('url-join')
 
-GitHubMarkdownLaTexRenderer = function (github, push) {
+TeXify = function (github, push) {
     this.github = github
     this.push = push
     
@@ -21,7 +21,7 @@ GitHubMarkdownLaTexRenderer = function (github, push) {
     }
 }
 
-GitHubMarkdownLaTexRenderer.prototype.args = function (obj) {
+TeXify.prototype.args = function (obj) {
     return Object.assign(
         {
             owner: this.push.repository.owner.name,
@@ -31,7 +31,7 @@ GitHubMarkdownLaTexRenderer.prototype.args = function (obj) {
     )
 }
 
-GitHubMarkdownLaTexRenderer.prototype.fetchTexFilesOnTree = function () {
+TeXify.prototype.fetchTexFilesOnTree = function () {
     return new Promise((resolve, reject) => {
 
         this.github.gitdata
@@ -54,7 +54,7 @@ GitHubMarkdownLaTexRenderer.prototype.fetchTexFilesOnTree = function () {
     })
 }
 
-GitHubMarkdownLaTexRenderer.prototype.renderAllTexFilesOnTree = function () {
+TeXify.prototype.renderAllTexFilesOnTree = function () {
     return new Promise((resolve, reject) => {
         
         this.fetchTexFilesOnTree()
@@ -69,7 +69,7 @@ GitHubMarkdownLaTexRenderer.prototype.renderAllTexFilesOnTree = function () {
     })
 }
 
-GitHubMarkdownLaTexRenderer.prototype.renderTexFile = function (file) {
+TeXify.prototype.renderTexFile = function (file) {
     return new Promise((resolve, reject) => {
 
         this.github.gitdata
@@ -102,7 +102,7 @@ GitHubMarkdownLaTexRenderer.prototype.renderTexFile = function (file) {
     })
 }
 
-GitHubMarkdownLaTexRenderer.prototype.pushChangesToGitHub = function () {
+TeXify.prototype.pushChangesToGitHub = function () {
     let files = readdirr(this.treeLocalPath)
 
     let createBlobPromises = files.map(file => {
@@ -147,4 +147,4 @@ GitHubMarkdownLaTexRenderer.prototype.pushChangesToGitHub = function () {
             })
 }
 
-module.exports = GitHubMarkdownLaTexRenderer
+module.exports = TeXify
