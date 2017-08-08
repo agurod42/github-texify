@@ -18,8 +18,10 @@
   },
   "homepage": "https://github.com/agurz/github-markdown-latex-renderer#readme",
   "dependencies": {
+    "fs-readdir-recursive": "^1.0.0",
     "github-app": "^3.0.0",
-    "github-webhook-handler": "^0.6.0"
+    "github-webhook-handler": "^0.6.0",
+    "rmdir": "^1.2.0"
   },
   "devDependencies": {
     "dotenv": "^4.0.0"
