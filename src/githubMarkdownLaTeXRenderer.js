@@ -82,12 +82,12 @@ GitHubMarkdownLaTexRenderer.prototype.renderTexFile = function (file) {
                 
                 exec('python -m readme2tex --nocdn --output ' + tmpOutputPath + ' --project ' + this.push.repository.name + ' --svgdir ' + path.join(this.treeLocalPath, 'tex') + ' --username ' + this.push.repository.owner.name + ' ' + tmpInputPath, { cwd: this.treeLocalPath }, (err, stdout, stderr) => {
                     if (err || stderr) reject(err || stderr)
-                    
+
+                    console.log(stderr)
                     console.log(stdout)
                     
                     try {
                         let svgBaseUrl = urljoin(this.push.repository.html_url, '/master/', path.dirname(file.path)).replace('github.com', 'rawgit.com')
-                        console.log(svgBaseUrl)
                         fs.writeFileSync(tmpOutputPath, fs.readFileSync(tmpOutputPath, 'utf8').replace(new RegExp(this.treeLocalPath, 'g'), svgBaseUrl))
                     }
                     catch (ex) {
