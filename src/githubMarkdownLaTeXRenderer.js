@@ -3,6 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const readdirr = require('fs-readdir-recursive')
 const rmdir = require('rmdir')
+const urljoin = require('url-join')
 
 GitHubMarkdownLaTexRenderer = function (github, push) {
     this.github = github
@@ -79,13 +80,15 @@ GitHubMarkdownLaTexRenderer.prototype.renderTexFile = function (file) {
 
                 fs.writeFileSync(tmpInputPath, res.data.content, res.data.encoding)
                 
-                exec('python -m readme2tex --nocdn --output ' + tmpOutputPath + ' --project ' + this.push.repository.name + ' --svgdir ' + path.join(this.treeLocalPath, res.data.sha) + ' --username ' + this.push.repository.owner.name + ' ' + tmpInputPath, { cwd: this.treeLocalPath }, (err, stdout, stderr) => {
+                exec('python -m readme2tex --nocdn --output ' + tmpOutputPath + ' --project ' + this.push.repository.name + ' --svgdir ' + path.join(this.treeLocalPath, 'tex') + ' --username ' + this.push.repository.owner.name + ' ' + tmpInputPath, { cwd: this.treeLocalPath }, (err, stdout, stderr) => {
                     if (err || stderr) reject(err || stderr)
                     
                     console.log(stdout)
                     
                     try {
-                        fs.writeFileSync(tmpOutputPath, fs.readFileSync(tmpOutputPath).replace(this.treeLocalPath, this.push.repository.html_url))
+                        let svgBaseUrl = urljoin(this.push.repository.html_url, '/master/', path.dirname(file.path)).replace('github.com', 'rawgit.com')
+                        console.log(svgBaseUrl)
+                        fs.writeFileSync(tmpOutputPath, fs.readFileSync(tmpOutputPath, 'utf8').replace(new RegExp(this.treeLocalPath, 'g'), svgBaseUrl))
                     }
                     catch (ex) {
                         reject(ex)

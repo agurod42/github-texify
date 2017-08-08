@@ -21,7 +21,8 @@
     "fs-readdir-recursive": "^1.0.0",
     "github-app": "^3.0.0",
     "github-webhook-handler": "^0.6.0",
-    "rmdir": "^1.2.0"
+    "rmdir": "^1.2.0",
+    "url-join": "^2.0.2"
   },
   "devDependencies": {
     "dotenv": "^4.0.0"
