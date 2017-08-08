@@ -21,6 +21,7 @@
     "fs-readdir-recursive": "^1.0.0",
     "github-app": "^3.0.0",
     "github-webhook-handler": "^0.6.0",
+    "mkdirp": "^0.5.1",
     "rmdir": "^1.2.0",
     "url-join": "^2.0.2"
   },

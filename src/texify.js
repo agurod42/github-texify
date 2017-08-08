@@ -1,5 +1,6 @@
 const exec = require('child_process').exec
 const fs = require('fs')
+const mkdirp = require('mkdirp')
 const path = require('path')
 const readdirr = require('fs-readdir-recursive')
 const rmdir = require('rmdir')
@@ -35,7 +36,7 @@ TeXify.prototype.fetchTexFilesOnTree = function () {
     return new Promise((resolve, reject) => {
 
         this.github.gitdata
-            .getTree(this.args({ sha: this.push.head_commit.tree_id }))
+            .getTree(this.args({ sha: this.push.head_commit.tree_id, recursive: true }))
             .then(res => {
                 let texFiles = []
 
@@ -75,19 +76,24 @@ TeXify.prototype.renderTexFile = function (file) {
         this.github.gitdata
             .getBlob(this.args({ sha: file.sha }))
             .then(res => {
-                let tmpInputPath = path.join(this.treeLocalPath, path.basename(file.path))
-                let tmpOutputPath = path.join(this.treeLocalPath, path.basename(file.path).replace('.tex.md', '.md'))
+                let svgOutputPath = path.join(this.treeLocalPath, path.dirname(file.path), 'tex')
+                let tmpInputPath = path.join(this.treeLocalPath, file.path)
+                let tmpOutputPath = path.join(this.treeLocalPath, file.path.replace('.tex.md', '.md'))
+
+                if (!fs.existsSync(svgOutputPath)) mkdirp(svgOutputPath)
+                if (!fs.existsSync(tmpInputPath)) mkdirp(path.dirname(tmpInputPath))
+                if (!fs.existsSync(tmpOutputPath)) mkdirp(path.dirname(tmpOutputPath))
 
                 fs.writeFileSync(tmpInputPath, res.data.content, res.data.encoding)
                 
-                exec('python -m readme2tex --nocdn --output ' + tmpOutputPath + ' --project ' + this.push.repository.name + ' --svgdir ' + path.join(this.treeLocalPath, 'tex') + ' --username ' + this.push.repository.owner.name + ' ' + tmpInputPath, { cwd: this.treeLocalPath }, (err, stdout, stderr) => {
+                exec('python -m readme2tex --nocdn --output ' + tmpOutputPath + ' --project ' + this.push.repository.name + ' --svgdir ' + svgOutputPath + ' --username ' + this.push.repository.owner.name + ' ' + tmpInputPath, { cwd: path.dirname(tmpInputPath) }, (err, stdout, stderr) => {
                     if (err || stderr) reject(err || stderr)
 
                     console.log(stderr)
                     console.log(stdout)
                     
                     try {
-                        let svgBaseUrl = urljoin(this.push.repository.html_url, '/master/', path.dirname(file.path)).replace('github.com', 'rawgit.com')
+                        let svgBaseUrl = urljoin(this.push.repository.html_url, '/master/').replace('github.com', 'rawgit.com')
                         fs.writeFileSync(tmpOutputPath, fs.readFileSync(tmpOutputPath, 'utf8').replace(new RegExp(this.treeLocalPath, 'g'), svgBaseUrl))
                     }
                     catch (ex) {
