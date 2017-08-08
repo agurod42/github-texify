@@ -78,9 +78,19 @@ GitHubMarkdownLaTexRenderer.prototype.renderTexFile = function (file) {
                 let tmpOutputPath = path.join(this.treeLocalPath, path.basename(file.path).replace('.tex.md', '.md'))
 
                 fs.writeFileSync(tmpInputPath, res.data.content, res.data.encoding)
+                
+                exec('python -m readme2tex --nocdn --output ' + tmpOutputPath + ' --project ' + this.push.repository.name + ' --svgdir ' + path.join(this.treeLocalPath, res.data.sha) + ' --username ' + this.push.repository.owner.name + ' ' + tmpInputPath, { cwd: this.treeLocalPath }, (err, stdout, stderr) => {
+                    if (err || stderr) reject(err || stderr)
+                    
+                    console.log(stdout)
+                    
+                    try {
+                        fs.writeFileSync(tmpOutputPath, fs.readFileSync(tmpOutputPath).replace(this.treeLocalPath, this.push.repository.html_url))
+                    }
+                    catch (ex) {
+                        reject(ex)
+                    }
 
-                exec('python -m readme2tex --nocdn --output ' + tmpOutputPath + ' --project ' + this.repo.name + ' --svgdir ' + path.join(this.treeLocalPath, res.data.sha) + ' --username ' + this.repo.owner.name + ' ' + tmpInputPath, (err, stdout, stderr) => {
-                    if (err) reject(err)
                     resolve();
                 })    
             })
