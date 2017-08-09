@@ -92,9 +92,9 @@ TeXify.prototype.renderTexFile = function (file) {
                     let tmpInputPath = path.join(this.treeLocalPath, file.path)
                     let tmpOutputPath = path.join(this.treeLocalPath, file.path.replace('.tex.md', '.md'))
 
-                    if (!fs.existsSync(svgOutputPath)) mkdirp(svgOutputPath)
-                    if (!fs.existsSync(tmpInputPath)) mkdirp(path.dirname(tmpInputPath))
-                    if (!fs.existsSync(tmpOutputPath)) mkdirp(path.dirname(tmpOutputPath))
+                    if (!fs.existsSync(svgOutputPath)) mkdirp.sync(svgOutputPath)
+                    if (!fs.existsSync(tmpInputPath)) mkdirp.sync(path.dirname(tmpInputPath))
+                    if (!fs.existsSync(tmpOutputPath)) mkdirp.sync(path.dirname(tmpOutputPath))
 
                     fs.writeFileSync(tmpInputPath, res.data.content, res.data.encoding)
                     
