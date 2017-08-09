@@ -1,5 +1,5 @@
 {
-  "name": "github-markdown-latex-renderer",
+  "name": "github-texify",
   "version": "1.0.0",
   "description": "",
   "main": "src/main.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/agurz/github-markdown-latex-renderer.git"
+    "url": "git+https://github.com/agurz/github-texify.git"
   },
   "author": "Agustín Rodríguez <agurz@icloud.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/agurz/github-markdown-latex-renderer/issues"
+    "url": "https://github.com/agurz/github-texify/issues"
   },
-  "homepage": "https://github.com/agurz/github-markdown-latex-renderer#readme",
+  "homepage": "https://github.com/agurz/github-texify#readme",
   "dependencies": {
     "fs-readdir-recursive": "^1.0.0",
     "github-app": "^3.0.0",
