@@ -99,11 +99,15 @@ TeXify.prototype.renderTexFile = function (file) {
                     fs.writeFileSync(tmpInputPath, res.data.content, res.data.encoding)
                     
                     exec('python -m readme2tex --nocdn --output ' + tmpOutputPath + ' --project ' + this.push.repository.name + ' --svgdir ' + svgOutputPath + ' --username ' + this.push.repository.owner.name + ' ' + tmpInputPath, { cwd: path.dirname(tmpInputPath) }, (err, stdout, stderr) => {
-                        if (err || stderr) reject(err || stderr)
+                        if (err) return reject(err)
+                        
+                        if (!fs.existsSync(tmpOutputPath)) {
+                            return reject(new Error('readme2tex error: ' + stderr))
+                        }
 
                         console.log(stderr)
                         console.log(stdout)
-                        
+
                         try {
                             let svgBaseUrl = urljoin(this.push.repository.html_url, '/master/').replace('github.com', 'rawgit.com')
                             fs.writeFileSync(tmpOutputPath, fs.readFileSync(tmpOutputPath, 'utf8').replace(new RegExp(this.treeLocalPath, 'g'), svgBaseUrl))
