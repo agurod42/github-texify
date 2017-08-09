@@ -35,8 +35,13 @@ githubWebhook.on('push', event => {
                 let texify = new TeXify(github, event.payload)
 
                 texify
-                    .renderAllTexFilesOnTree()
-                    .then(() => texify.pushChangesToGitHub())
+                    .renderAllTexFilesOnPush()
+                    .then(renderedFiles => {
+                        if (renderedFiles.length > 0) {
+                            console.log('rendered', renderedFiles)
+                            return texify.pushChangesToGitHub()
+                        }
+                    })
                     .then(() => {
                         console.log('OK!')
                     })

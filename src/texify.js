@@ -32,8 +32,10 @@ TeXify.prototype.args = function (obj) {
     )
 }
 
-TeXify.prototype.fetchTexFilesOnTree = function () {
+TeXify.prototype.fetchTexFilesOnPush = function () {
     return new Promise((resolve, reject) => {
+
+        let commitFiles = this.push.head_commit.added.concat(this.push.head_commit.modified)
 
         this.github.gitdata
             .getTree(this.args({ sha: this.push.head_commit.tree_id, recursive: true }))
@@ -42,12 +44,16 @@ TeXify.prototype.fetchTexFilesOnTree = function () {
 
                 if (!res.data.truncated) {
                     res.data.tree.forEach(file => {
-                        if (/\.tex\.md$/gi.test(file.path)) {
+                        if (commitFiles.indexOf(file.path) >= 0 && /\.tex\.md$/gi.test(file.path)) {
                             texFiles.push(file)
                         }
                     })
                 }
                 
+                if (!texFiles.length) {
+                    console.log('No tex files found. Nothing to do')
+                }
+
                 resolve(texFiles)
             })
             .catch(reject)
@@ -55,10 +61,10 @@ TeXify.prototype.fetchTexFilesOnTree = function () {
     })
 }
 
-TeXify.prototype.renderAllTexFilesOnTree = function () {
+TeXify.prototype.renderAllTexFilesOnPush = function () {
     return new Promise((resolve, reject) => {
         
-        this.fetchTexFilesOnTree()
+        this.fetchTexFilesOnPush()
             .then(texFiles => {
                 Promise
                     .all(texFiles.map(file => this.renderTexFile(file).catch(err => err)))
