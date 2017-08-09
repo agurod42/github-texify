@@ -10,7 +10,7 @@ TeXify = function (github, push) {
     this.github = github
     this.push = push
     
-    this.tmpPath = path.join(__dirname, '../tmp')
+    this.tmpPath = '/tmp'
     this.treeLocalPath = path.join(this.tmpPath, this.push.head_commit.tree_id)
 
     if (!fs.existsSync(this.tmpPath)) {
