@@ -154,7 +154,7 @@ TeXify.prototype.pushChangesToGitHub = function () {
             })
             .then(tree => {
                 return this.github.gitdata.createCommit(this.args({
-                    message: 'Rendered TeX expressions',
+                    message: 'Rendered TeX expressions in ' + this.push.head_commit.id,
                     parents: [ this.push.head_commit.id ],
                     tree: tree.data.sha,
                 }))
