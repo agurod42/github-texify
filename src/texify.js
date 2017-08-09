@@ -20,6 +20,9 @@ TeXify = function (github, push) {
     if (!fs.existsSync(this.treeLocalPath)) {
         fs.mkdirSync(this.treeLocalPath)
     }
+    else {
+        rmdir(this.treeLocalPath)
+    }
 }
 
 TeXify.prototype.args = function (obj) {
@@ -82,32 +85,40 @@ TeXify.prototype.renderTexFile = function (file) {
         this.github.gitdata
             .getBlob(this.args({ sha: file.sha }))
             .then(res => {
-                let svgOutputPath = path.join(this.treeLocalPath, path.dirname(file.path), 'tex')
-                let tmpInputPath = path.join(this.treeLocalPath, file.path)
-                let tmpOutputPath = path.join(this.treeLocalPath, file.path.replace('.tex.md', '.md'))
 
-                if (!fs.existsSync(svgOutputPath)) mkdirp(svgOutputPath)
-                if (!fs.existsSync(tmpInputPath)) mkdirp(path.dirname(tmpInputPath))
-                if (!fs.existsSync(tmpOutputPath)) mkdirp(path.dirname(tmpOutputPath))
+                try {
 
-                fs.writeFileSync(tmpInputPath, res.data.content, res.data.encoding)
-                
-                exec('python -m readme2tex --nocdn --output ' + tmpOutputPath + ' --project ' + this.push.repository.name + ' --svgdir ' + svgOutputPath + ' --username ' + this.push.repository.owner.name + ' ' + tmpInputPath, { cwd: path.dirname(tmpInputPath) }, (err, stdout, stderr) => {
-                    if (err || stderr) reject(err || stderr)
+                    let svgOutputPath = path.join(this.treeLocalPath, path.dirname(file.path), 'tex')
+                    let tmpInputPath = path.join(this.treeLocalPath, file.path)
+                    let tmpOutputPath = path.join(this.treeLocalPath, file.path.replace('.tex.md', '.md'))
 
-                    console.log(stderr)
-                    console.log(stdout)
+                    if (!fs.existsSync(svgOutputPath)) mkdirp(svgOutputPath)
+                    if (!fs.existsSync(tmpInputPath)) mkdirp(path.dirname(tmpInputPath))
+                    if (!fs.existsSync(tmpOutputPath)) mkdirp(path.dirname(tmpOutputPath))
+
+                    fs.writeFileSync(tmpInputPath, res.data.content, res.data.encoding)
                     
-                    try {
-                        let svgBaseUrl = urljoin(this.push.repository.html_url, '/master/').replace('github.com', 'rawgit.com')
-                        fs.writeFileSync(tmpOutputPath, fs.readFileSync(tmpOutputPath, 'utf8').replace(new RegExp(this.treeLocalPath, 'g'), svgBaseUrl))
-                    }
-                    catch (ex) {
-                        reject(ex)
-                    }
+                    exec('python -m readme2tex --nocdn --output ' + tmpOutputPath + ' --project ' + this.push.repository.name + ' --svgdir ' + svgOutputPath + ' --username ' + this.push.repository.owner.name + ' ' + tmpInputPath, { cwd: path.dirname(tmpInputPath) }, (err, stdout, stderr) => {
+                        if (err || stderr) reject(err || stderr)
 
-                    resolve();
-                })    
+                        console.log(stderr)
+                        console.log(stdout)
+                        
+                        try {
+                            let svgBaseUrl = urljoin(this.push.repository.html_url, '/master/').replace('github.com', 'rawgit.com')
+                            fs.writeFileSync(tmpOutputPath, fs.readFileSync(tmpOutputPath, 'utf8').replace(new RegExp(this.treeLocalPath, 'g'), svgBaseUrl))
+                        }
+                        catch (ex) {
+                            reject(ex)
+                        }
+
+                        resolve(file.path)
+                    })
+
+                }
+                catch (ex) {
+                    reject(ex)
+                }
             })
             .catch(reject)
 
