@@ -70,7 +70,7 @@ TeXify.prototype.renderAllTexFilesOnPush = function () {
         this.fetchTexFilesOnPush()
             .then(texFiles => {
                 Promise
-                    .all(texFiles.map(file => this.renderTexFile(file).catch(err => err)))
+                    .all(texFiles.map(file => this.renderTexFile(file)))
                     .then(resolve)
                     .catch(reject)
             })
