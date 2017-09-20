@@ -4,7 +4,7 @@
 
 <h1 align="center">TeXify</h1>
 
-TeXify is a [GitHub App](https://developer.github.com/apps/) built on top of [`readme2tex`](https://github.com/leegao/readme2tex) that takes your *.tex.md files and replaces anything enclosed between dollar signs with rendered TeX every time push.
+TeXify is a [GitHub App](https://developer.github.com/apps/) built on top of [`readme2tex`](https://github.com/leegao/readme2tex) that automatically takes your markdown files and replaces anything enclosed between dollar signs with rendered LaTeX.
 
 ## How it works?
 
