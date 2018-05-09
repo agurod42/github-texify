@@ -40,7 +40,7 @@ TeXify.prototype.fetchTexFilesOnPush = function () {
 
         let commitFiles = []
         
-        for (let commit in this.push.commits) {
+        for (let commit of this.push.commits) {
             commitFiles.push(...commit.added, ...commit.modified)
         }
 
