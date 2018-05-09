@@ -1,3 +1,3 @@
 This is just a test: 
 
-<p align="center"><img src="/tmp/88a4cc80c3e583768313e75f319f65a513529cdc/example/tex/b953e53bde1072b6eca11994c69ae5d8.svg?invert_in_darkmode&sanitize=true" align=middle width=126.93073965pt height=36.7526973pt/></p>
+<p align="center"><img src="/tmp/1117cc1d610cf64587b1f72d80f406042562700d/example/tex/75ec0b0728acc135f32323c6e463c8a1.svg?invert_in_darkmode&sanitize=true" align=middle width=159.0401175pt height=36.7526973pt/></p>
