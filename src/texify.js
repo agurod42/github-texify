@@ -38,7 +38,11 @@ TeXify.prototype.args = function (obj) {
 TeXify.prototype.fetchTexFilesOnPush = function () {
     return new Promise((resolve, reject) => {
 
-        let commitFiles = this.push.head_commit.added.concat(this.push.head_commit.modified)
+        let commitFiles = []
+        
+        for (let commit of this.push.commits) {
+            commitFiles.push(...commit.added, ...commit.modified)
+        }
 
         this.github.gitdata
             .getTree(this.args({ sha: this.push.head_commit.tree_id, recursive: true }))
@@ -164,7 +168,7 @@ TeXify.prototype.pushChangesToGitHub = function () {
             })
             .then(tree => {
                 return this.github.gitdata.createCommit(this.args({
-                    message: 'Rendered TeX expressions in ' + this.push.head_commit.id,
+                    message: `Rendered TeX expressions in ${this.push.commits.map(c => c.id).join(', ')}`,
                     parents: [ this.push.head_commit.id ],
                     tree: tree.data.sha,
                 }))
