@@ -111,7 +111,13 @@ TeXify.prototype.renderTexFile = function (file) {
                         console.log(stdout)
 
                         try {
-                            fs.writeFileSync(tmpOutputPath, fs.readFileSync(tmpOutputPath, 'utf8').replace(/\?invert_in_darkmode/g, '?invert_in_darkmode&sanitize=true'))
+                            let svgBaseUrl = urljoin(this.push.repository.html_url, '/master/')
+
+                            let tmpOutputContents = fs.readFileSync(tmpOutputPath, 'utf8')
+                                .replace(new RegExp(this.treeLocalPath, 'g'), svgBaseUrl)
+                                .replace(new RegExp('?invert_in_darkmode', 'g'), '?invert_in_darkmode&sanitize=true')
+                                
+                            fs.writeFileSync(tmpOutputPath, tmpOutputContents)
                         }
                         catch (ex) {
                             reject(ex)
