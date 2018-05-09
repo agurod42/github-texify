@@ -38,7 +38,11 @@ TeXify.prototype.args = function (obj) {
 TeXify.prototype.fetchTexFilesOnPush = function () {
     return new Promise((resolve, reject) => {
 
-        let commitFiles = this.push.head_commit.added.concat(this.push.head_commit.modified)
+        let commitFiles = []
+        
+        for (let commit in this.push.commits) {
+            commitFiles.push(...commit.added, ...commit.modified)
+        }
 
         this.github.gitdata
             .getTree(this.args({ sha: this.push.head_commit.tree_id, recursive: true }))
