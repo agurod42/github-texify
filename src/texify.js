@@ -97,8 +97,10 @@ TeXify.prototype.renderTexFile = function (file) {
                     if (!fs.existsSync(tmpOutputPath)) mkdirp.sync(path.dirname(tmpOutputPath))
 
                     fs.writeFileSync(tmpInputPath, res.data.content, res.data.encoding)
+
+                    let readme2tex = `python -m readme2tex --nocdn --output ${tmpOutputPath} --project ${this.push.repository.name} --svgdir ${svgOutputPath} --username ${this.push.repository.owner.name} ${tmpInputPath}`
                     
-                    exec('python -m readme2tex --nocdn --output ' + tmpOutputPath + ' --project ' + this.push.repository.name + ' --svgdir ' + svgOutputPath + ' --username ' + this.push.repository.owner.name + ' ' + tmpInputPath, { cwd: path.dirname(tmpInputPath) }, (err, stdout, stderr) => {
+                    exec(readme2tex, { cwd: path.dirname(tmpInputPath) }, (err, stdout, stderr) => {
                         if (err) return reject(err)
                         
                         if (!fs.existsSync(tmpOutputPath)) {
@@ -109,8 +111,13 @@ TeXify.prototype.renderTexFile = function (file) {
                         console.log(stdout)
 
                         try {
-                            let svgBaseUrl = urljoin(this.push.repository.html_url, '/master/').replace('github.com', 'rawgit.com')
-                            fs.writeFileSync(tmpOutputPath, fs.readFileSync(tmpOutputPath, 'utf8').replace(new RegExp(this.treeLocalPath, 'g'), svgBaseUrl))
+                            let svgBaseUrl = urljoin(this.push.repository.html_url, '/master/').replace('://github.com', '://raw.githubusercontent.com')
+
+                            let tmpOutputContents = fs.readFileSync(tmpOutputPath, 'utf8')
+                                .replace(new RegExp(this.treeLocalPath, 'g'), svgBaseUrl)
+                                .replace(new RegExp('invert_in_darkmode', 'g'), 'invert_in_darkmode&sanitize=true')
+
+                            fs.writeFileSync(tmpOutputPath, tmpOutputContents)
                         }
                         catch (ex) {
                             reject(ex)
@@ -123,6 +130,7 @@ TeXify.prototype.renderTexFile = function (file) {
                 catch (ex) {
                     reject(ex)
                 }
+                
             })
             .catch(reject)
 
