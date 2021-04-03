@@ -102,7 +102,7 @@ TeXify.prototype.renderTexFile = function (file) {
 
                     fs.writeFileSync(tmpInputPath, res.data.content, res.data.encoding)
 
-                    let readme2tex = `python -m readme2tex --nocdn --output ${tmpOutputPath} --project ${this.push.repository.name} --svgdir ${svgOutputPath} --username ${this.push.repository.owner.name} ${tmpInputPath}`
+                    let readme2tex = `python -m readme2tex --nocdn --output "${tmpOutputPath}" --project "${this.push.repository.name}" --svgdir "${svgOutputPath}" --username "${this.push.repository.owner.name}" "${tmpInputPath}"`
                     
                     exec(readme2tex, { cwd: path.dirname(tmpInputPath) }, (err, stdout, stderr) => {
                         if (err) return reject(err)
